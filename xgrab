@@ -1,0 +1,82 @@
+#!/bin/sh
+
+if [[ -z $XRESOURCES ]]
+then
+	XRES="$(eval echo ~$USER)/.Xresources"
+else
+	XRES=$XRESOURCES
+fi
+
+if [[ ! -f ~/.cache/xgrab-var || ! -f ~/.cache/xgrab-res ]]
+then
+	msg "Cache files missing! Making them!" warning
+fi
+
+IFS=""
+TYPE=""
+GET="$2"
+REMOVE='$1="";'
+
+get() {
+	if [[ $1 == "var" ]]
+	then
+		REMOVE='$1=""; $2="";'
+	fi
+	
+	if [[ ! -z $2 ]]
+	then
+		GET="$2"
+	fi
+
+	cat ~/.cache/xgrab-$1 | grep $GET | awk "{ $REMOVE print }" | sed "s/^[ \t]*//" | sed 1q
+}
+
+case $1 in
+	"-v")
+		TYPE="var"
+		;;
+	"-r")
+		TYPE="res"
+		;;
+	"-m")
+		RESOURCES="$(cat $XRES | grep -v '!' | sed '/^$/d')"
+		echo $RESOURCES | grep define > ~/.cache/xgrab-var
+		echo $RESOURCES | grep -v '#' > ~/.cache/xgrab-res
+		;;
+	*)
+		msg "You need to specify the type of resource" error
+		;;
+esac
+
+if [[ $TYPE == "var" ]]
+then
+	NUM='$2'
+	REMOVEOTHER="\$1=\"\";"
+	REMOVE="\$1=\"\";\$2=\"\""
+else
+	NUM='$1'
+	REMOVEOTHER=""
+	REMOVE="\$1=\"\""
+fi
+
+c() {
+	cat ~/.cache/xgrab-$TYPE | sed 's/^[ \t]*//;s/[ \t]*$//'
+}
+
+case $2 in
+	"-l")
+		c | awk "{ print $NUM }"
+		;;
+	"-ll")
+		c | awk "{ $REMOVE; print }"
+		;;
+	"-lll")
+		c | awk "{ $REMOVEOTHER print }"
+		;;
+	*)
+		for i in ${@:2}
+		do
+			get $TYPE $i
+		done
+		;;
+esac
