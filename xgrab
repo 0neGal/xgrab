@@ -40,8 +40,11 @@ case $1 in
 		;;
 	"-m")
 		RESOURCES="$(cat $XRES | grep -v '!' | sed '/^$/d')"
-		echo $RESOURCES | grep define > ~/.cache/xgrab-var
-		echo $RESOURCES | grep -v '#' > ~/.cache/xgrab-res
+		echo $RESOURCES | grep define > $CACHE_FOLDER/xgrab-var.tmp
+		echo $RESOURCES | grep -v '#' > $CACHE_FOLDER/xgrab-res.tmp
+
+		mv $CACHE_FOLDER/xgrab-var.tmp $CACHE_FOLDER/xgrab-var
+		mv $CACHE_FOLDER/xgrab-res.tmp $CACHE_FOLDER/xgrab-res
 		;;
 	*)
 		msg "You need to specify the type of resource" error
