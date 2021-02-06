@@ -1,16 +1,14 @@
 #!/bin/sh
 
-if [[ -z $XRESOURCES ]]
-then
+[ -z "$XRESOURCES" ] && {
 	XRES="$(eval echo ~$USER)/.Xresources"
-else
+} || {
 	XRES=$XRESOURCES
-fi
+}
 
-if [[ ! -f ~/.cache/xgrab-var || ! -f ~/.cache/xgrab-res ]]
-then
+[ -f "~/.cache/xgrab-var" ] || [ -f "~/.cache/xgrab-res" ] && {
 	msg "Cache files missing! Making them!" warning
-fi
+}
 
 IFS=""
 TYPE=""
@@ -18,15 +16,13 @@ GET="$2"
 REMOVE='$1="";'
 
 get() {
-	if [[ $1 == "var" ]]
-	then
+	[ $1 == "var" ] && {
 		REMOVE='$1=""; $2="";'
-	fi
+	}
 	
-	if [[ ! -z $2 ]]
-	then
+	[ ! -z "$2" ] && {
 		GET="$2"
-	fi
+	}
 
 	cat ~/.cache/xgrab-$1 | grep $GET | awk "{ $REMOVE print }" | sed "s/^[ \t]*//" | sed 1q
 }
@@ -51,16 +47,15 @@ case $1 in
 		;;
 esac
 
-if [[ $TYPE == "var" ]]
-then
+[ "$TYPE" == "var" ] && {
 	NUM='$2'
 	REMOVEOTHER="\$1=\"\";"
 	REMOVE="\$1=\"\";\$2=\"\""
-else
+} || {
 	NUM='$1'
 	REMOVEOTHER=""
 	REMOVE="\$1=\"\""
-fi
+}
 
 c() {
 	cat ~/.cache/xgrab-$TYPE | sed 's/^[ \t]*//;s/[ \t]*$//'
