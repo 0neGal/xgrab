@@ -4,7 +4,7 @@ Xgrab, is a simple utility which extracts resources and variables from your Xres
 
 ## How to?
 
-`git clone https://github.com/0neGuyDev/xgrab && cd xgrab`
+`git clone https://github.com/0neGal/xgrab && cd xgrab`
 
 `chmod +x xgrab`
 
