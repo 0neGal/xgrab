@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 [ -z "$XRESOURCES" ] && {
 	XRES="$(eval echo ~$USER)/.Xresources"
@@ -24,7 +24,7 @@ get() {
 		GET="$2"
 	}
 
-	cat ~/.cache/xgrab-$1 | grep $GET | awk "{ $REMOVE print }" | sed "s/^[ \t]*//" | sed 1q
+	cat ~/.cache/xgrab-$1 | grep $GET | awk "{ $REMOVE; print }" | sed "s/^[ \t]*//" | sed 1q
 }
 
 case $1 in
@@ -47,7 +47,7 @@ case $1 in
 		;;
 esac
 
-[ "$TYPE" == "var" ] && {
+[ "$TYPE" = "var" ] && {
 	NUM='$2'
 	REMOVEOTHER="\$1=\"\";"
 	REMOVE="\$1=\"\";\$2=\"\""
@@ -72,8 +72,7 @@ case $2 in
 		c | awk "{ $REMOVEOTHER print }"
 		;;
 	*)
-		for i in ${@:2}
-		do
+		for i in ${@:2}; do
 			get $TYPE $i
 		done
 		;;
